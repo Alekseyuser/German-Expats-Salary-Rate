@@ -1,0 +1,5 @@
+com.GermanExpats.SalaryRate
+com.GermanExpats.SalaryRate.Controller
+com.GermanExpats.SalaryRate.DAO
+com.GermanExpats.SalaryRate.entity
+com.GermanExpats.SalaryRate.service
