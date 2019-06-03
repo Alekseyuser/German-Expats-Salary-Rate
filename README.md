@@ -20,6 +20,6 @@ PUT	| /germanemployee/	| Update record	| {"id":1,"date_point":"12/13/2016 14:19"
 DELETE	| /germanemployee/{id}/	| Delete record	by id | http://localhost:8080//germanemployee/373/ |
 
 
-#### To do list:
+#### Plan for next steps:
 - implement simple UI using smartless html templates;
 - implement pagination using PagingAndSortingRepository.
