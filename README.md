@@ -3,7 +3,7 @@
 This application based on several hundreds lines DB about expats who works in Germany.
 It provide standart CRUD functions using json requests.
 No frontend for this moment.
-List of technologies uses in the application: spring boot, maven, tomcat, javadoc, junit4, log4j, mariaDB.
+List of technologies uses in the application: spring boot, maven, jpa, hibernate, tomcat, javadoc, junit4, log4j, mariaDB.
 DB has deployed to remote VDS to ensure portability.
 
 #### Requirements:
