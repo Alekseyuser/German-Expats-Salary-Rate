@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="webjars.jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="webjars.bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+</head>
+<body>
+
+
+
+<div>
+
+    <table class="table table-hover table-striped">
+
+        <thead>
+        <tr>
+            <th>id</th>
+            <th>date_point</th>
+            <th>age</th>
+            <th>sex</th>
+            <th>city</th>
+            <th>position</th>
+            <th>experience_in_Europe</th>
+            <th>total_experience</th>
+            <th>salary</th>
+            <th>salary_1_year_ago</th>
+            <th>first_europe_salary</th>
+            <th>number_of_job_in_europe</th>
+            <th>work_language</th>
+            <th>company_size</th>
+            <th>company_type</th>
+            <th>level</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="employee : ${data.content}">
+            <td th:text="${employee.id}"></td>
+            <td th:text="${employee.date_point}"></td>
+            <td th:text="${employee.age}"></td>
+            <td th:text="${employee.sex}"></td>
+            <td th:text="${employee.city}"></td>
+            <td th:text="${employee.position}"></td>
+            <td th:text="${employee.experience_in_Europe}"></td>
+            <td th:text="${employee.total_experience}"></td>
+            <td th:text="${employee.salary}"></td>
+            <td th:text="${employee.salary_1_year_ago}"></td>
+            <td th:text="${employee.first_europe_salary}"></td>
+            <td th:text="${employee.number_of_job_in_europe}"></td>
+            <td th:text="${employee.work_language}"></td>
+            <td th:text="${employee.company_size}"></td>
+            <td th:text="${employee.company_type}"></td>
+            <td th:text="${employee.level}"></td>
+        </tr>
+
+        </tbody>
+
+
+    </table>
+    <ui class="nav nav-pills">
+        <li class="nav-item"
+        th:each="i : ${#numbers.sequence(0,data.totalPages-1)}">
+            <a th:href="@{/(page=${i})}" th:text="${i}" class="nav-link"
+            th:classappend="${currentPage}==${i}?'active':''"></a>
+        </li>
+    </ui>
+
+
+</div>
+
+
+</body>
+</html>
