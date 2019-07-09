@@ -1,25 +1,19 @@
 package com.GermanExpats.SalaryRate;
 
-import com.GermanExpats.SalaryRate.service.GermanEmployeeService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.*;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import static org.assertj.core.api.Assertions.assertThat;
-import org.springframework.web.client.RestTemplate;
 import com.GermanExpats.SalaryRate.entity.GermanEmployee;
-import com.GermanExpats.SalaryRate.DAO.GermanEmployeeDAO;
 import com.GermanExpats.SalaryRate.service.IGermanEmployeeService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.GermanExpats.SalaryRate.Controller.GermanEmployeeController;
 
-import java.net.URI;
 
 /**
  * Test methods for all application functionality
@@ -46,38 +40,14 @@ public class SalaryRateApplicationTests {
 
     @Test
     public void getEmployeeByIdDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/germanemployee/{id}/";
-        HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-        ResponseEntity<GermanEmployee> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, GermanEmployee.class, 1);
-        GermanEmployee germanEmployee = responseEntity.getBody();
-        System.out.println("Id:"+germanEmployee.getId()+", Position:"+germanEmployee.getPosition());
+        GermanEmployee emp = germanEmployeeService.getEmployeeById(germanEmployeeService.getLastId());
+        assertThat(emp.getId()).isEqualTo(germanEmployeeService.getLastId());
     }
 
-    @Test
-    public void getAllEmployeesDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/germanemployees/";
-        HttpEntity<String> requestEntity = new HttpEntity<String>(headers);
-        ResponseEntity<GermanEmployee[]> responseEntity = restTemplate.exchange(url, HttpMethod.GET, requestEntity, GermanEmployee[].class);
-        GermanEmployee[] germanEmployees = responseEntity.getBody();
-        for (GermanEmployee germanEmployee : germanEmployees) {
-            System.out.println("Id:" + germanEmployee.getId() +
-                    ", Position:" + germanEmployee.getPosition());
-
-        }
-    }
 
     @Test
     public void test1AddEmployeeDemo() {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/germanemployee/";
+        int lastId = germanEmployeeService.getLastId();
         GermanEmployee objEmployee = new GermanEmployee();
         objEmployee.setDate_point("12/13/2016 14:11");
         objEmployee.setTotal_experience(1);
@@ -93,10 +63,9 @@ public class SalaryRateApplicationTests {
         objEmployee.setCompany_type("Test");
         objEmployee.setCompany_size("Test");
         objEmployee.setCity("Test");
-        objEmployee.setAge(1);
-        HttpEntity<GermanEmployee> requestEntity = new HttpEntity<GermanEmployee>(objEmployee, headers);
-        URI uri = restTemplate.postForLocation(url, requestEntity);
-        System.out.println(uri.getPath());
+        objEmployee.setAge(99);
+        germanEmployeeService.addEmployee(objEmployee);
+        assertThat(lastId).isNotEqualTo(germanEmployeeService.getLastId());
         //lambda allows don't check is required log level enabled
         logger.info("Test object id: {} has been created successfully", () -> germanEmployeeService.getLastId());
 
@@ -105,12 +74,7 @@ public class SalaryRateApplicationTests {
 
     @Test
     public void test2UpdateEmployeeDemo() {
-        lastId = germanEmployeeService.getLastId();
-        System.out.println("lastId: " + lastId);
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/germanemployee/";
+        int lastId = germanEmployeeService.getLastId();
         GermanEmployee objEmployee = new GermanEmployee();
         objEmployee.setId(lastId);
         objEmployee.setDate_point("12/13/2016 14:11");
@@ -127,41 +91,32 @@ public class SalaryRateApplicationTests {
         objEmployee.setCompany_type("TestUpdate");
         objEmployee.setCompany_size("TestUpdate");
         objEmployee.setCity("TestUpdate");
-        objEmployee.setAge(1);
-        HttpEntity<GermanEmployee> requestEntity = new HttpEntity<GermanEmployee>(objEmployee, headers);
-        restTemplate.put(url, requestEntity);
-        //lambda allows don't check is required log level enabled
+        objEmployee.setAge(100);
+        germanEmployeeService.updateEmployee(objEmployee);
+        assertThat(objEmployee).isEqualTo(germanEmployeeService.getEmployeeById(lastId));
         logger.info("Test object id: {} has been updated successfully", () -> objEmployee.getId());
     }
     @Test
     public void test3DeleteEmployeeDemo() {
         lastId = germanEmployeeService.getLastId(); //will delete object with last id in DB
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON);
-        RestTemplate restTemplate = new RestTemplate();
-        String url = "http://localhost:8080/germanemployee/".concat(String.valueOf(lastId).concat("/"));
-        HttpEntity<GermanEmployee> requestEntity = new HttpEntity<GermanEmployee>(headers);
-        restTemplate.exchange(url, HttpMethod.DELETE, requestEntity, Void.class, 4);
-        //lambda allows don't check is required log level enabled
+        germanEmployeeService.deleteEmployee(lastId);
+        assertThat(lastId).isNotEqualTo(germanEmployeeService.getLastId());
         logger.info("Test object id: {} has been deleted successfully", () -> lastId);
 
     }
 
 
     @Test
-    public void contextLoads() throws Exception {
+    public void contextLoads() {
         assertThat(controller).isNotNull();
     }
 
     public static void main(String args[]) {
         SalaryRateApplicationTests util = new SalaryRateApplicationTests();
-        util.getAllEmployeesDemo();
         util.getEmployeeByIdDemo();
         util.test1AddEmployeeDemo();
         util.test2UpdateEmployeeDemo();
         util.test3DeleteEmployeeDemo();
-
-
     }
 
 }

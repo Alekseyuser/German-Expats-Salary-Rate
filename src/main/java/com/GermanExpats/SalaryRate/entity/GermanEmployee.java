@@ -1,6 +1,7 @@
 package com.GermanExpats.SalaryRate.entity;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -177,5 +178,31 @@ public class GermanEmployee implements Serializable{
         this.level = level;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        GermanEmployee that = (GermanEmployee) o;
+        return employeeId == that.employeeId &&
+                age == that.age &&
+                sex == that.sex &&
+                experience_in_Europe == that.experience_in_Europe &&
+                salary == that.salary &&
+                salary_1_year_ago == that.salary_1_year_ago &&
+                first_europe_salary == that.first_europe_salary &&
+                number_of_job_in_europe == that.number_of_job_in_europe &&
+                Objects.equals(date_point, that.date_point) &&
+                Objects.equals(city, that.city) &&
+                Objects.equals(position, that.position) &&
+                Objects.equals(total_experience, that.total_experience) &&
+                Objects.equals(work_language, that.work_language) &&
+                Objects.equals(company_size, that.company_size) &&
+                Objects.equals(company_type, that.company_type) &&
+                Objects.equals(level, that.level);
+    }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(employeeId, date_point, age, sex, city, position, experience_in_Europe, total_experience, salary, salary_1_year_ago, first_europe_salary, number_of_job_in_europe, work_language, company_size, company_type, level);
+    }
 }

@@ -1,33 +1,36 @@
 package com.GermanExpats.SalaryRate.Controller;
 
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 import com.GermanExpats.SalaryRate.service.IGermanEmployeeService;
 import com.GermanExpats.SalaryRate.entity.GermanEmployee;
+import org.springframework.ui.Model;
 
-@RestController
+
+@Controller
 public class GermanEmployeeController {
 
     @Autowired
     private IGermanEmployeeService germanEmployeeService;
 
+    @GetMapping("/")
+    public String showPage(Model model, @RequestParam(defaultValue="0") int page){
+        model.addAttribute("data", germanEmployeeService.getAllEmployees(page));
+        model.addAttribute("currentPage", page);
+        return "index";
+    }
+
     @GetMapping("/germanemployee/{id}/")
+    @ResponseBody
     public ResponseEntity<GermanEmployee> getEmployeeById(@PathVariable("id") Integer id) {
         GermanEmployee germanEmployee = germanEmployeeService.getEmployeeById(id);
         return new ResponseEntity<GermanEmployee>(germanEmployee, HttpStatus.OK);
-    }
-
-    @GetMapping("/germanemployees/")
-    public ResponseEntity<List<GermanEmployee>> getAllGermanEmployees() {
-
-            List<GermanEmployee> list = germanEmployeeService.getAllEmployees();
-        return new ResponseEntity<List<GermanEmployee>>(list, HttpStatus.OK);
     }
 
     @PostMapping("/germanemployee/")
@@ -48,4 +51,5 @@ public class GermanEmployeeController {
         germanEmployeeService.deleteEmployee(id);
         return new ResponseEntity<Void>(HttpStatus.NO_CONTENT);
     }
+
 }

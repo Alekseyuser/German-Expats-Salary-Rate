@@ -1,43 +1,44 @@
 package com.GermanExpats.SalaryRate.service;
 
 import com.GermanExpats.SalaryRate.entity.GermanEmployee;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.GermanExpats.SalaryRate.repositories.EmployeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import com.GermanExpats.SalaryRate.DAO.IGermanEmployeeDAO;
+import javax.persistence.EntityNotFoundException;
 
 
 @Service
 public class GermanEmployeeService implements IGermanEmployeeService {
 
 
-    /**
-     * object to have access to DAO
-     */
+
+
     @Autowired
-    private IGermanEmployeeDAO germanEmployeeDAO;
+    EmployeeRepository employeeRepository;
 
     /**
      * @return list of all employees from DB
      */
+
     @Override
-    public List<GermanEmployee> getAllEmployees() {
-        return germanEmployeeDAO.getAllEmployees();
-
-
+    public Page<GermanEmployee> getAllEmployees(int page) {
+        return employeeRepository.findAll(PageRequest.of(page,10));
     }
 
     /**
      * @param employeeId - each employee(line in DB) has unique ID
      * @return all information about employee based on his id
      */
+
     @Override
     public GermanEmployee getEmployeeById(int employeeId) {
-        GermanEmployee obj = germanEmployeeDAO.getEmployeeById(employeeId);
-        return obj;
+        if(employeeRepository.existsById(employeeId))
+            return employeeRepository.findById(employeeId).get();
+        else
+            //Exception API for non-exist id in the DB
+            throw new EntityNotFoundException();
     }
 
     /**
@@ -48,25 +49,47 @@ public class GermanEmployeeService implements IGermanEmployeeService {
      *                 "number_of_job_in_europe":1,"work_language":"test","company_size":"50-100",
      *                 "company_type":"startup","level":"Senior"}
      */
+
     @Override
     public void addEmployee(GermanEmployee employee) {
-        germanEmployeeDAO.addEmployee(employee);
+        employeeRepository.save(employee);
     }
 
     /**
      * @param employee include all fields. Line with same id in DB will be replaced.
      */
+
     @Override
     public void updateEmployee(GermanEmployee employee) {
-        germanEmployeeDAO.updateEmployee(employee);
+        GermanEmployee emp = employeeRepository.findById(employee.getId())
+                .orElseThrow(() -> new EntityNotFoundException());
+
+        emp.setAge(employee.getAge());
+        emp.setCity(employee.getCity());
+        emp.setCompany_size(employee.getCompany_size());
+        emp.setCompany_type(employee.getCompany_type());
+        emp.setDate_point(employee.getDate_point());
+        emp.setExperience_in_Europe(employee.getExperience_in_Europe());
+        emp.setFirst_europe_salary(employee.getFirst_europe_salary());
+        emp.setId(employee.getId());
+        emp.setLevel(employee.getLevel());
+        emp.setNumber_of_job_in_europe(employee.getNumber_of_job_in_europe());
+        emp.setPosition(employee.getPosition());
+        emp.setSalary(employee.getSalary());
+        emp.setSalary_1_year_ago(employee.getSalary_1_year_ago());
+        emp.setSex(employee.getSex());
+        emp.setTotal_experience(employee.getTotal_experience());
+        emp.setWork_language(employee.getWork_language());
+        employeeRepository.save(emp);
     }
 
     /**
-     * @param employeeId of employee you want to delete.
+     * @param employeeId of employee to delete.
      */
+
     @Override
     public void deleteEmployee(int employeeId) {
-        germanEmployeeDAO.deleteEmployee(employeeId);
+        employeeRepository.deleteById(employeeId);
     }
 
     /**
@@ -74,7 +97,8 @@ public class GermanEmployeeService implements IGermanEmployeeService {
      */
     @Override
     public int getLastId() {
-        return germanEmployeeDAO.getLastId();
+        //return germanEmployeeDAO.getLastId();
+        return employeeRepository.getLastId();
     }
 
 }
